@@ -216,15 +216,15 @@ esp_err_t epaper_panel_refresh_screen(esp_lcd_panel_t *panel)
     // --- Set color invert
     uint8_t duc_flag = 0x00;
     if (!(epaper_panel->_invert_color)) {
-        duc_flag |= SSD1680_PARAM_COLOR_BW_INVERSE_BIT;
-        duc_flag &= (~SSD1680_PARAM_COLOR_RW_INVERSE_BIT);
+        duc_flag |= SSD1680_PARAM_COLOR_BW_INVERSE_BIT[0];
+        duc_flag &= (~SSD1680_PARAM_COLOR_RW_INVERSE_BIT[0]);
     } else {
-        duc_flag &= (~SSD1680_PARAM_COLOR_BW_INVERSE_BIT);
-        duc_flag |= SSD1680_PARAM_COLOR_RW_INVERSE_BIT;
+        duc_flag &= (~SSD1680_PARAM_COLOR_BW_INVERSE_BIT[0]);
+        duc_flag |= SSD1680_PARAM_COLOR_RW_INVERSE_BIT[0];
     }
     ESP_RETURN_ON_ERROR(esp_lcd_panel_io_tx_param(epaper_panel->io, SSD1680_CMD_DISP_UPDATE_CTRL, (uint8_t[]) {
-        duc_flag  // Color invert flag
-    }, 1), TAG, "SSD1680_CMD_DISP_UPDATE_CTRL err");
+        (uint8_t[]){duc_flag, 0x80}  // Color invert flag
+    }, 2), TAG, "SSD1680_CMD_DISP_UPDATE_CTRL err");
     // --- Enable refresh done handler isr
     gpio_intr_enable(epaper_panel->busy_gpio_num);
     // --- Send refresh command
